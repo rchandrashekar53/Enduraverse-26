@@ -1,2 +1,2 @@
-# -Enduraverse-26
+# Enduraverse-26
 Endhraverse hackathon
