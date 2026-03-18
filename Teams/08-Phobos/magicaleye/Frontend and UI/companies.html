@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DivyaDrishti — Companies</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+.co-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px;margin-bottom:20px;
+}
+.co-card{
+  background:var(--ink2);border:1px solid var(--rim);
+  border-radius:var(--r);overflow:hidden;
+  cursor:pointer;transition:all .2s;
+}
+.co-card:hover{border-color:var(--rim3);transform:translateY(-2px);}
+.co-card.active{border-color:var(--rim3);}
+.co-header{
+  padding:14px 16px;display:flex;
+  align-items:center;gap:12px;
+  border-bottom:1px solid var(--rim);
+}
+.co-logo{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--syne);font-size:14px;font-weight:800;
+  color:#fff;flex-shrink:0;letter-spacing:.5px;
+}
+.co-name{font-family:var(--syne);font-size:14px;font-weight:700;}
+.co-sector{font-family:var(--mono);font-size:9px;color:var(--tx3);letter-spacing:1px;margin-top:1px;}
+.co-stats{
+  padding:12px 16px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+.co-stat-val{
+  font-family:var(--syne);font-size:18px;font-weight:800;
+  line-height:1;
+}
+.co-stat-lbl{
+  font-family:var(--mono);font-size:8px;
+  color:var(--tx3);text-transform:uppercase;
+  letter-spacing:1px;margin-top:3px;
+}
+.co-bar{
+  height:3px;margin:0 16px 12px;
+  background:var(--ink4);border-radius:2px;overflow:hidden;
+}
+.co-bar-fill{height:100%;border-radius:2px;transition:width .8s;}
+
+/* Detail panel */
+.detail-panel{
+  background:var(--ink2);border:1px solid var(--rim);
+  border-radius:var(--r);overflow:hidden;
+}
+.detail-head{
+  padding:14px 16px;border-bottom:1px solid var(--rim);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.detail-title{font-family:var(--syne);font-size:15px;font-weight:700;}
+.img-gallery{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:8px;padding:14px;
+}
+.gallery-item{
+  position:relative;border-radius:8px;overflow:hidden;
+  border:1px solid var(--rim);cursor:pointer;
+  transition:border-color .15s;
+  aspect-ratio:4/3;
+}
+.gallery-item:hover{border-color:var(--rim3);}
+.gallery-item img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  background:var(--ink3);
+}
+.gallery-tag{
+  position:absolute;top:5px;right:5px;
+  font-family:var(--mono);font-size:8px;font-weight:700;
+  padding:1px 5px;border-radius:5px;letter-spacing:.5px;
+}
+.gallery-tag.ok{background:rgba(56,239,125,.85);color:#000;}
+.gallery-tag.nok{background:rgba(252,75,108,.85);color:#fff;}
+.gallery-partid{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(8,11,18,.8);
+  font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.6);
+  padding:3px 6px;
+}
+
+/* Modal override for companies */
+.part-modal{
+  background:var(--ink2);border:1px solid var(--rim2);
+  border-radius:var(--r);overflow:hidden;
+  max-width:min(700px,95vw);width:100%;
+  animation:mopen .2s ease;
+}
+.part-meta-grid{
+  padding:16px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:12px;border-top:1px solid var(--rim);
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="/static/logo.png" alt="DivyaDrishti">
+    <div>
+      <div class="sidebar-brand">DIVYA DRISHTI</div>
+      <div class="sidebar-tagline">Smart Fault Detection Glasses</div>
+    </div>
+  </div>
+  <nav class="nav-links">
+    <a href="/" class="nav-link">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Overview
+    </a>
+    <a href="/monitor" class="nav-link">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      Live Monitor
+    </a>
+    <a href="/analytics" class="nav-link">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      Analytics
+    </a>
+    <a href="/log" class="nav-link">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      Inspection Log
+    </a>
+    <a href="/companies" class="nav-link">
+  <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+  </svg>
+  Companies
+</a>
+    <a href="/companies" class="nav-link active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+      Companies
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sys-row"><div class="sys-dot" id="s-cam"></div>Camera</div>
+    <div class="sys-row"><div class="sys-dot" id="s-sb"></div>Supabase</div>
+    <div class="uptime-txt" id="uptime">00:00:00</div>
+  </div>
+</aside>
+
+<button class="ham"
+  onclick="document.getElementById('sidebar').classList.toggle('open')">
+  <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</button>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Client Companies</div>
+      <div class="page-sub">
+        INSPECTION RECORDS BY MANUFACTURER
+      </div>
+    </div>
+    <div class="live-pill">
+      <div class="lpulse"></div>
+      <span id="total-parts">0 PARTS INSPECTED</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Company cards grid -->
+    <div class="co-grid" id="co-grid">
+      <!-- Filled by JS -->
+    </div>
+
+    <!-- Detail panel -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-head">
+        <div>
+          <div class="detail-title" id="detail-title">
+            Select a company above
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;
+            color:var(--tx3);margin-top:3px;" id="detail-sub">
+            Click any company card to view its inspection photos
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span class="badge bd" id="detail-count"></span>
+          <span class="badge bg" id="detail-yield"></span>
+        </div>
+      </div>
+
+      <!-- Summary row -->
+      <div id="detail-summary" style="display:none;
+        padding:12px 16px;border-bottom:1px solid var(--rim);
+        display:flex;gap:20px;flex-wrap:wrap;">
+        <div>
+          <span style="font-family:var(--mono);font-size:9px;
+            color:var(--tx3);">TOTAL &nbsp;</span>
+          <span id="ds-total" style="font-family:var(--syne);
+            font-size:16px;font-weight:700;color:var(--sky);"></span>
+        </div>
+        <div>
+          <span style="font-family:var(--mono);font-size:9px;
+            color:var(--tx3);">PASSED &nbsp;</span>
+          <span id="ds-ok" style="font-family:var(--syne);
+            font-size:16px;font-weight:700;color:var(--ok);"></span>
+        </div>
+        <div>
+          <span style="font-family:var(--mono);font-size:9px;
+            color:var(--tx3);">FAILED &nbsp;</span>
+          <span id="ds-nok" style="font-family:var(--syne);
+            font-size:16px;font-weight:700;color:var(--nok);"></span>
+        </div>
+        <div>
+          <span style="font-family:var(--mono);font-size:9px;
+            color:var(--tx3);">CRITICAL &nbsp;</span>
+          <span id="ds-crit" style="font-family:var(--syne);
+            font-size:16px;font-weight:700;color:var(--cr);"></span>
+        </div>
+      </div>
+
+      <!-- Photo gallery -->
+      <div class="img-gallery" id="gallery">
+        <div class="empty" style="grid-column:1/-1;">
+          Click a company card to view inspection photos
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Part detail modal -->
+<div class="modal-bg" id="modal"
+     onclick="this===event.target&&closeM()">
+  <div class="part-modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <span class="modal-title" id="m-title">Part Detail</span>
+      <span class="modal-x" onclick="closeM()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img">
+        <img id="m-img" src="" alt=""
+             style="width:100%;display:block;
+                    max-height:45vh;object-fit:contain;">
+      </div>
+      <div class="modal-side">
+        <div class="qr-box" id="m-qr-box" style="display:none">
+          <img id="m-qr" src="" alt="QR">
+        </div>
+        <div class="qr-lbl" id="m-qr-lbl"></div>
+        <a class="cloud-btn" id="m-cloud"
+           href="#" target="_blank" style="display:none">
+          VIEW ON CLOUD
+        </a>
+      </div>
+    </div>
+    <div class="part-meta-grid" id="m-meta"></div>
+  </div>
+</div>
+
+<!-- Mobile bottom tabs -->
+<nav class="mobile-tabs">
+  <a href="/" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
+  </a>
+  <a href="/monitor" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>Monitor
+  </a>
+  <a href="/log" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Log
+  </a>
+  <a href="/companies" class="mob-tab active">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>Companies
+  </a>
+  <a href="/alerts" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>Alerts
+  </a>
+</nav>
+
+<script>
+const COMPANIES = [
+  {id:'tata',     name:'Tata Motors',        sector:'AUTOMOTIVE',  abbr:'TM',  color:'#1a56db'},
+  {id:'hero',     name:'Hero MotoCorp',       sector:'TWO-WHEELER', abbr:'HM',  color:'#e02424'},
+  {id:'mahindra', name:'Mahindra & Mahindra', sector:'AUTOMOTIVE',  abbr:'M&M', color:'#d03801'},
+  {id:'maruti',   name:'Maruti Suzuki',       sector:'AUTOMOTIVE',  abbr:'MS',  color:'#057a55'},
+  {id:'bajaj',    name:'Bajaj Auto',          sector:'TWO-WHEELER', abbr:'BA',  color:'#7e3af2'},
+  {id:'honda',    name:'Honda India',         sector:'AUTOMOTIVE',  abbr:'HI',  color:'#c81e1e'},
+];
+
+let allData = [];
+let selectedCo = null;
+let startT = Date.now();
+
+setInterval(()=>{
+  const s=Math.floor((Date.now()-startT)/1000);
+  document.getElementById('uptime').textContent=
+    [Math.floor(s/3600),Math.floor(s%3600/60),s%60]
+    .map(n=>String(n).padStart(2,'0')).join(':');
+},1000);
+
+async function loadHealth(){
+  try{
+    const {data:d}=await fetch('/api/health').then(r=>r.json());
+    document.getElementById('s-cam').className=
+      'sys-dot '+(d.camera?'ok':'err');
+    document.getElementById('s-sb').className=
+      'sys-dot '+(d.supabase?'ok':'err');
+    startT=Date.now()-((d.uptime||0)*1000);
+  }catch(e){}
+}
+
+function imgSrc(r){
+  return(r.image_url&&r.image_url!=='uploading...'
+         &&r.image_url!=='')?
+    r.image_url:`/snapshots/${r.image_file||''}`;
+}
+
+const sevCls=s=>s==='CRITICAL'?'sev-c':
+               s==='MEDIUM'  ?'sev-m':
+               s==='LOW'     ?'sev-l':'';
+
+async function loadData(){
+  try{
+    const {data}=await fetch('/api/company-inspections')
+      .then(r=>r.json());
+    allData=data;
+
+    // Update total
+    document.getElementById('total-parts').textContent=
+      data.length+' PARTS INSPECTED';
+
+    // Build per-company stats
+    const stats={};
+    COMPANIES.forEach(c=>{
+      stats[c.id]={total:0,ok:0,nok:0,critical:0,items:[]};
+    });
+    data.forEach(row=>{
+      const s=stats[row.company_id];
+      if(!s) return;
+      s.total++;
+      if(row.result==='OK') s.ok++;
+      else s.nok++;
+      if(row.severity==='CRITICAL') s.critical++;
+      s.items.push(row);
+    });
+
+    renderCompanyCards(stats);
+
+    // Re-render gallery if company selected
+    if(selectedCo) showCompany(selectedCo,stats[selectedCo]);
+  }catch(e){}
+}
+
+function renderCompanyCards(stats){
+  const grid=document.getElementById('co-grid');
+  grid.innerHTML=COMPANIES.map(co=>{
+    const s=stats[co.id]||{total:0,ok:0,nok:0,critical:0};
+    const yield_pct=s.total?Math.round(s.ok/s.total*100):0;
+    const isActive=selectedCo===co.id;
+    return `
+    <div class="co-card ${isActive?'active':''}"
+         onclick="selectCo('${co.id}')">
+      <div class="co-header">
+        <div class="co-logo"
+             style="background:${co.color}">
+          ${co.abbr}
+        </div>
+        <div>
+          <div class="co-name">${co.name}</div>
+          <div class="co-sector">${co.sector}</div>
+        </div>
+        <div style="margin-left:auto;">
+          <span class="badge ${yield_pct>=70?'bg':'br'}">
+            ${yield_pct}% yield
+          </span>
+        </div>
+      </div>
+      <div class="co-stats">
+        <div>
+          <div class="co-stat-val"
+               style="color:var(--sky)">${s.total}</div>
+          <div class="co-stat-lbl">Total</div>
+        </div>
+        <div>
+          <div class="co-stat-val"
+               style="color:var(--ok)">${s.ok}</div>
+          <div class="co-stat-lbl">Passed</div>
+        </div>
+        <div>
+          <div class="co-stat-val"
+               style="color:var(--nok)">${s.nok}</div>
+          <div class="co-stat-lbl">Failed</div>
+        </div>
+      </div>
+      <div class="co-bar">
+        <div class="co-bar-fill"
+             style="width:${yield_pct}%;
+                    background:${co.color};
+                    opacity:.7;">
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectCo(coId){
+  selectedCo=coId;
+  // Rebuild stats
+  const stats={};
+  COMPANIES.forEach(c=>{
+    stats[c.id]={total:0,ok:0,nok:0,critical:0,items:[]};
+  });
+  allData.forEach(row=>{
+    const s=stats[row.company_id];
+    if(!s) return;
+    s.total++;
+    if(row.result==='OK') s.ok++;
+    else s.nok++;
+    if(row.severity==='CRITICAL') s.critical++;
+    s.items.push(row);
+  });
+  renderCompanyCards(stats);
+  showCompany(coId, stats[coId]);
+  // Scroll to detail
+  document.getElementById('detail-panel')
+    .scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function showCompany(coId, stat){
+  const co=COMPANIES.find(c=>c.id===coId);
+  if(!co||!stat) return;
+  const yp=stat.total?Math.round(stat.ok/stat.total*100):0;
+
+  document.getElementById('detail-title').textContent=
+    co.name+' — Inspection Records';
+  document.getElementById('detail-sub').textContent=
+    `${stat.total} parts inspected · `+
+    `${stat.nok} defective · `+
+    `${stat.critical} critical`;
+
+  document.getElementById('detail-count').textContent=
+    stat.total+' parts';
+  const yb=document.getElementById('detail-yield');
+  yb.textContent=yp+'% yield';
+  yb.className='badge '+(yp>=70?'bg':'br');
+
+  const ds=document.getElementById('detail-summary');
+  ds.style.display='flex';
+  document.getElementById('ds-total').textContent=stat.total;
+  document.getElementById('ds-ok').textContent=stat.ok;
+  document.getElementById('ds-nok').textContent=stat.nok;
+  document.getElementById('ds-crit').textContent=stat.critical;
+
+  // Gallery
+  const gallery=document.getElementById('gallery');
+  if(!stat.items.length){
+    gallery.innerHTML=`<div class="empty"
+      style="grid-column:1/-1">
+      No inspections assigned to ${co.name} yet
+    </div>`;
+    return;
+  }
+
+  gallery.innerHTML=stat.items.slice(0,40).map(r=>{
+    const ok=r.result==='OK';
+    return `
+    <div class="gallery-item"
+         onclick='openM(${JSON.stringify(r)},
+           "${co.name}","${co.color}")'>
+      <img src="${imgSrc(r)}"
+           onerror="this.style.opacity='.1'"
+           alt="${r.part_id}">
+      <span class="gallery-tag ${ok?'ok':'nok'}">
+        ${r.result}
+      </span>
+      <div class="gallery-partid">${r.part_id}</div>
+    </div>`;
+  }).join('');
+}
+
+function openM(r, coName, coColor){
+  if(typeof r==='string') r=JSON.parse(r);
+  const ok=r.result==='OK';
+  document.getElementById('m-title').innerHTML=
+    `<span style="color:${coColor};margin-right:8px;">●</span>`+
+    `${coName} · Part ${r.part_id}`;
+  document.getElementById('m-img').src=imgSrc(r);
+
+  const qb=document.getElementById('m-qr-box');
+  const ql=document.getElementById('m-qr-lbl');
+  if(r.qr_code&&r.qr_code.length>10){
+    document.getElementById('m-qr').src=
+      'data:image/png;base64,'+r.qr_code;
+    qb.style.display='flex';
+    ql.textContent='Traceability QR';
+  } else {
+    qb.style.display='none';ql.textContent='';
+  }
+  const cb=document.getElementById('m-cloud');
+  if(r.image_url&&r.image_url!=='uploading...'
+     &&r.image_url!==''){
+    cb.href=r.image_url;cb.style.display='block';
+  } else { cb.style.display='none'; }
+
+  document.getElementById('m-meta').innerHTML=[
+    ['Company', coName],
+    ['Result',`<span class="tag ${ok?'ok':'nok'}">${r.result}</span>`],
+    ['Part ID', r.part_id],
+    ['Timestamp', r.timestamp],
+    ['Defects', r.n_defects],
+    ['Severity',`<span class="${sevCls(r.severity)}">${r.severity}</span>`],
+    ['Confidence', Math.round(r.confidence*100)+'%'],
+    ['Size (mm)', r.size_mm],
+  ].map(([k,v])=>`
+    <div>
+      <div class="meta-k">${k}</div>
+      <div class="meta-v">${v}</div>
+    </div>`).join('');
+
+  document.getElementById('modal').classList.add('open');
+}
+function closeM(){
+  document.getElementById('modal').classList.remove('open');
+}
+document.addEventListener('keydown',
+  e=>e.key==='Escape'&&closeM());
+
+loadHealth();loadData();
+setInterval(loadHealth,10000);
+setInterval(loadData,  10000);
+</script>
+</body>
+</html>

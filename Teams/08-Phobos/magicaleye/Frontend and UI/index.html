@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DivyaDrishti — Overview</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img src="{{ url_for('static', filename='logo.jpg') }}">
+    <div>
+      <div class="sidebar-brand" style="font-size:8px">DIVYADRISHTI</div>
+      <div class="sidebar-tagline" style="font-size:8px">Smart Fault Detection</div>
+    </div>
+  </div>
+  <nav class="nav-links">
+    <a href="/" class="nav-link active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Overview
+    </a>
+    <a href="/monitor" class="nav-link">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+      Live Monitor
+    </a>
+    <a href="/analytics" class="nav-link">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      Analytics
+    </a>
+    <a href="/log" class="nav-link">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+      Inspection Log
+    </a>
+    <a href="/alerts" class="nav-link" id="nav-alerts">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+      Alerts
+      <span class="nav-badge" id="nav-alert-count" style="display:none">0</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sys-row"><div class="sys-dot" id="s-cam"></div>Camera</div>
+    <div class="sys-row"><div class="sys-dot" id="s-sb"></div>Supabase</div>
+    <div class="sys-row"><div class="sys-dot" id="s-tw"></div>Alerts</div>
+    <div class="uptime-txt" id="uptime">00:00:00</div>
+  </div>
+</aside>
+
+<!-- Mobile hamburger -->
+<button class="ham" onclick="document.getElementById('sidebar').classList.toggle('open')">
+  <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</button>
+
+<!-- Main -->
+<main class="main">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Overview</div>
+      <div class="page-sub">SYSTEM DASHBOARD · REAL-TIME</div>
+    </div>
+    <div class="live-pill"><div class="lpulse"></div>LIVE</div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPIs -->
+    <div class="kpis" style="margin-bottom:20px">
+      <div class="kpi" style="--kb:var(--sky)">
+        <div class="kpi-bar"></div>
+        <div class="kpi-ghost" id="g0">0</div>
+        <div class="kpi-val" id="k0">0</div>
+        <div class="kpi-lbl">Total Inspected</div>
+      </div>
+      <div class="kpi" style="--kb:var(--ok)">
+        <div class="kpi-bar"></div>
+        <div class="kpi-ghost" id="g1">0</div>
+        <div class="kpi-val" id="k1">0</div>
+        <div class="kpi-lbl">Passed</div>
+        <div class="kpi-sub" id="k1s">Yield --%</div>
+      </div>
+      <div class="kpi" style="--kb:var(--nok)">
+        <div class="kpi-bar"></div>
+        <div class="kpi-ghost" id="g2">0</div>
+        <div class="kpi-val" id="k2">0</div>
+        <div class="kpi-lbl">Failed</div>
+        <div class="kpi-sub" id="k2s">Rate --%</div>
+      </div>
+      <div class="kpi" style="--kb:var(--cr)">
+        <div class="kpi-bar"></div>
+        <div class="kpi-ghost" id="g3">0</div>
+        <div class="kpi-val" id="k3">0</div>
+        <div class="kpi-lbl">Critical</div>
+      </div>
+      <div class="kpi" style="--kb:var(--me)">
+        <div class="kpi-bar"></div>
+        <div class="kpi-ghost" id="g4">0</div>
+        <div class="kpi-val" id="k4">0</div>
+        <div class="kpi-lbl">Medium</div>
+      </div>
+      <div class="kpi" style="--kb:var(--pu)">
+        <div class="kpi-bar"></div>
+        <div class="kpi-ghost" id="g5">0</div>
+        <div class="kpi-val" id="k5" style="color:var(--pu)">0</div>
+        <div class="kpi-lbl">Active Alerts</div>
+      </div>
+    </div>
+
+    <!-- Two column: feed + recent -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:16px;">
+
+      <!-- Mini live feed -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Live Feed Preview</span>
+          <a href="/monitor" class="badge bb">Full Screen &rarr;</a>
+        </div>
+        <div style="position:relative;background:#000;aspect-ratio:16/9;overflow:hidden;">
+          <img src="/video_feed" style="width:100%;height:100%;object-fit:cover;">
+          <div style="position:absolute;bottom:0;left:0;right:0;
+            background:linear-gradient(transparent,rgba(8,11,18,.9));
+            padding:20px 12px 10px;display:flex;align-items:flex-end;
+            justify-content:space-between;pointer-events:none;">
+            <div id="mini-lbl" style="font-family:var(--syne);font-size:22px;
+              font-weight:800;letter-spacing:2px;color:var(--ok);
+              filter:drop-shadow(0 0 10px currentColor)">--</div>
+            <div id="mini-meta" style="font-family:var(--mono);font-size:9px;
+              color:rgba(255,255,255,.4);text-align:right;line-height:1.9;">--</div>
+          </div>
+        </div>
+        <div style="padding:10px 14px;display:flex;align-items:center;gap:8px;
+          border-top:1px solid var(--rim);">
+          <div id="mini-pill" style="padding:3px 12px;border-radius:20px;
+            font-family:var(--syne);font-size:12px;font-weight:700;
+            letter-spacing:2px;background:var(--ok-d);color:var(--ok);
+            border:1px solid var(--ok-b);">--</div>
+          <div id="mini-info" style="font-family:var(--mono);font-size:10px;
+            color:var(--tx2);">Waiting...</div>
+        </div>
+      </div>
+
+      <!-- Recent 5 -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Latest Results</span>
+          <a href="/log" class="badge bd">View All &rarr;</a>
+        </div>
+        <div id="recent-list">
+          <div class="empty">Waiting...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom row: doughnut + severity + trend -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+
+      <!-- Doughnut -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Pass / Fail</span>
+          <span class="badge bb" id="yield-badge">--%</span>
+        </div>
+        <div class="chart-box" style="display:flex;align-items:center;
+          justify-content:center;padding:20px;">
+          <canvas id="donut" style="max-width:130px;max-height:130px;"></canvas>
+        </div>
+      </div>
+
+      <!-- Severity -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Severity Breakdown</span>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--mono);font-size:9px;font-weight:700;
+              color:var(--cr);width:58px;letter-spacing:1px;">CRITICAL</span>
+            <div style="flex:1;height:6px;background:var(--ink4);border-radius:3px;overflow:hidden;">
+              <div id="sf-c" style="height:100%;background:var(--cr);border-radius:3px;width:0;transition:width .7s;"></div>
+            </div>
+            <span id="sn-c" style="font-family:var(--mono);font-size:11px;color:var(--tx2);width:24px;text-align:right;">0</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--mono);font-size:9px;font-weight:700;
+              color:var(--me);width:58px;letter-spacing:1px;">MEDIUM</span>
+            <div style="flex:1;height:6px;background:var(--ink4);border-radius:3px;overflow:hidden;">
+              <div id="sf-m" style="height:100%;background:var(--me);border-radius:3px;width:0;transition:width .7s;"></div>
+            </div>
+            <span id="sn-m" style="font-family:var(--mono);font-size:11px;color:var(--tx2);width:24px;text-align:right;">0</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-family:var(--mono);font-size:9px;font-weight:700;
+              color:var(--lo);width:58px;letter-spacing:1px;">LOW</span>
+            <div style="flex:1;height:6px;background:var(--ink4);border-radius:3px;overflow:hidden;">
+              <div id="sf-l" style="height:100%;background:var(--lo);border-radius:3px;width:0;transition:width .7s;"></div>
+            </div>
+            <span id="sn-l" style="font-family:var(--mono);font-size:11px;color:var(--tx2);width:24px;text-align:right;">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mini trend -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">12h Trend</span>
+          <span class="badge bw" id="trend-badge">--</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="mini-line" style="max-height:130px;"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<!-- Mobile bottom tabs -->
+<nav class="mobile-tabs">
+  <a href="/" class="mob-tab active">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+    Home
+  </a>
+  <a href="/monitor" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+    Monitor
+  </a>
+  <a href="/analytics" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+    Charts
+  </a>
+  <a href="/log" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+    Log
+  </a>
+  <a href="/alerts" class="mob-tab">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    Alerts
+  </a>
+  <a href="/companies" class="nav-link">
+  <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+  </svg>
+  Companies
+</a>
+</nav>
+
+<script>
+// Shared helpers
+const sevCls=s=>s==='CRITICAL'?'sev-c':s==='MEDIUM'?'sev-m':s==='LOW'?'sev-l':'';
+function imgSrc(r){
+  return(r.image_url&&r.image_url!=='uploading...'&&r.image_url!=='')?
+    r.image_url:`/snapshots/${r.image_file||''}`;
+}
+
+// Uptime
+let startT=Date.now();
+setInterval(()=>{
+  const s=Math.floor((Date.now()-startT)/1000);
+  document.getElementById('uptime').textContent=
+    [Math.floor(s/3600),Math.floor(s%3600/60),s%60]
+    .map(n=>String(n).padStart(2,'0')).join(':');
+},1000);
+
+// Health
+async function loadHealth(){
+  try{
+    const {data:d}=await fetch('/api/health').then(r=>r.json());
+    document.getElementById('s-cam').className='sys-dot '+(d.camera?'ok':'err');
+    document.getElementById('s-sb').className='sys-dot '+(d.supabase?'ok':'err');
+    document.getElementById('s-tw').className='sys-dot '+(d.twilio?'ok':'err');
+    startT=Date.now()-((d.uptime||0)*1000);
+  }catch(e){}
+}
+
+// Charts
+const donut=new Chart(document.getElementById('donut'),{
+  type:'doughnut',
+  data:{labels:['Passed','Failed'],datasets:[{
+    data:[0,0],
+    backgroundColor:['rgba(56,239,125,.7)','rgba(252,75,108,.7)'],
+    borderColor:['rgba(56,239,125,.3)','rgba(252,75,108,.3)'],
+    borderWidth:1,hoverOffset:4
+  }]},
+  options:{
+    responsive:true,maintainAspectRatio:true,cutout:'72%',
+    plugins:{legend:{display:false}}
+  }
+});
+
+const miniLine=new Chart(document.getElementById('mini-line'),{
+  type:'line',
+  data:{labels:[],datasets:[
+    {label:'Total',data:[],borderColor:'rgba(99,179,237,.8)',
+     backgroundColor:'rgba(99,179,237,.05)',tension:.4,fill:true,
+     pointRadius:2,borderWidth:1.5},
+    {label:'NOK',data:[],borderColor:'rgba(252,75,108,.8)',
+     backgroundColor:'rgba(252,75,108,.05)',tension:.4,fill:true,
+     pointRadius:2,borderWidth:1.5}
+  ]},
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{ticks:{font:{family:"'IBM Plex Mono'",size:8}},
+         grid:{color:'rgba(99,179,237,.04)'}},
+      y:{beginAtZero:true,
+         ticks:{font:{family:"'IBM Plex Mono'",size:8}},
+         grid:{color:'rgba(99,179,237,.04)'}}
+    }
+  }
+});
+
+// Stats
+async function loadStats(){
+  try{
+    const {data:d}=await fetch('/api/stats').then(r=>r.json());
+    [0,1,2,3,4].forEach((i,_)=>{
+      const vals=[d.total||0,d.ok_count||0,d.nok_count||0,d.critical||0,d.medium||0];
+      document.getElementById('k'+i).textContent=vals[i];
+      document.getElementById('g'+i).textContent=vals[i];
+    });
+    const na=(d.active_alerts||[]).length;
+    document.getElementById('k5').textContent=na;
+    document.getElementById('g5').textContent=na;
+    document.getElementById('k1s').textContent='Yield '+(d.yield_pct||0)+'%';
+    document.getElementById('k2s').textContent='Rate '+(d.defect_rate||0)+'%';
+    document.getElementById('yield-badge').textContent=(d.yield_pct||0)+'%';
+
+    // Severity
+    const mx=Math.max(d.critical||0,d.medium||0,d.low_sev||0,1);
+    document.getElementById('sf-c').style.width=((d.critical||0)/mx*100)+'%';
+    document.getElementById('sf-m').style.width=((d.medium||0)/mx*100)+'%';
+    document.getElementById('sf-l').style.width=((d.low_sev||0)/mx*100)+'%';
+    document.getElementById('sn-c').textContent=d.critical||0;
+    document.getElementById('sn-m').textContent=d.medium||0;
+    document.getElementById('sn-l').textContent=d.low_sev||0;
+
+    // Alert badge on nav
+    if(na>0){
+      const nb=document.getElementById('nav-alert-count');
+      nb.style.display='inline';nb.textContent=na;
+    }
+
+    // Trend badge
+    const rc=d.rate_change||0;
+    const tb=document.getElementById('trend-badge');
+    tb.textContent=rc>0?'+'+rc.toFixed(1)+'%':rc<0?rc.toFixed(1)+'%':'Stable';
+    tb.className='badge '+(rc>=10?'br':rc<=-5?'bg':'bw');
+
+    // Charts
+    donut.data.datasets[0].data=[d.ok_count||0,d.nok_count||0];
+    donut.update('none');
+    const trend=d.trend||[];
+    miniLine.data.labels=trend.map(x=>x.hour.slice(0,5));
+    miniLine.data.datasets[0].data=trend.map(x=>x.total);
+    miniLine.data.datasets[1].data=trend.map(x=>x.nok);
+    miniLine.update('none');
+  }catch(e){}
+}
+
+// Latest
+let lastPID=null;
+async function loadLatest(){
+  try{
+    const {data:d}=await fetch('/api/latest').then(r=>r.json());
+    if(d.label==='--'||d.part_id===lastPID)return;
+    lastPID=d.part_id;
+    const ok=d.label==='OK';
+    const cl=ok?'var(--ok)':'var(--nok)';
+    document.getElementById('mini-lbl').style.color=cl;
+    document.getElementById('mini-lbl').textContent=d.label;
+    document.getElementById('mini-meta').innerHTML=`ID:${d.part_id}<br>${d.timestamp}`;
+    document.getElementById('mini-pill').textContent=d.label;
+    document.getElementById('mini-pill').style.cssText=ok?
+      'padding:3px 12px;border-radius:20px;font-family:var(--syne);font-size:12px;font-weight:700;letter-spacing:2px;background:var(--ok-d);color:var(--ok);border:1px solid var(--ok-b)':
+      'padding:3px 12px;border-radius:20px;font-family:var(--syne);font-size:12px;font-weight:700;letter-spacing:2px;background:var(--nok-d);color:var(--nok);border:1px solid var(--nok-b)';
+    const sc=d.severity==='CRITICAL'?'sev-c':d.severity==='MEDIUM'?'sev-m':'sev-l';
+    document.getElementById('mini-info').innerHTML=
+      `<b style="color:var(--tx)">${d.part_id}</b> · Defects: ${d.n_defects}`+
+      (d.severity!=='---'?` · <span class="${sc}">${d.severity}</span>`:'')+
+      (d.size_mm!=='---'?` · ${d.size_mm}mm`:'');
+  }catch(e){}
+}
+
+// Recent list
+async function loadRecent(){
+  try{
+    const {data}=await fetch('/api/inspections?limit=5').then(r=>r.json());
+    const el=document.getElementById('recent-list');
+    if(!data.length){el.innerHTML='<div class="empty">No inspections yet</div>';return;}
+    el.innerHTML=data.map(r=>{
+      const ok=r.result==='OK';
+      return `
+      <div style="display:flex;align-items:center;gap:10px;
+        padding:9px 14px;border-bottom:1px solid var(--rim);cursor:pointer;"
+        onclick="window.location='/log'">
+        <img src="${imgSrc(r)}" style="width:52px;height:38px;
+          object-fit:cover;border-radius:5px;
+          border:1px solid var(--rim);background:var(--ink3);flex-shrink:0;"
+          onerror="this.style.opacity='.1'">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+            <span style="font-family:var(--mono);font-size:11px;font-weight:600;">${r.part_id}</span>
+            <span class="tag ${ok?'ok':'nok'}">${r.result}</span>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--tx3);">
+            ${r.timestamp} · ${r.n_defects} defects
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+loadHealth();loadStats();loadLatest();loadRecent();
+setInterval(loadHealth, 10000);
+setInterval(loadStats,   3000);
+setInterval(loadLatest,  1500);
+setInterval(loadRecent,  5000);
+</script>
+</body>
+</html>
