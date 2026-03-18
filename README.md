@@ -22,12 +22,6 @@ Participants can choose from the following tracks:
 
 ---
 
-## 🏗️ High-Level Architecture
-
-![High-Level Architecture](./Teams/08-Phobos/assests/High-Level%20Architecture.jpeg)
-
----
-
 ## 📅 Timeline
 - **Hackathon Kickoff**: [Insert Date]  
 - **Team Formation & Ideation**: [Insert Date]  

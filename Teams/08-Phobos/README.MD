@@ -19,7 +19,9 @@ To address this problem, we developed a "Smart Fault Detection Glasses" using Ra
 - Battery
 - Buzzer
 
-## High Level Architecture:
+## 🏗️ High-Level Architecture
+
+![High-Level Architecture](./Teams/08-Phobos/assests/High-Level%20Architecture.jpeg)
 
 ## Project Structure:
 
