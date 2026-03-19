@@ -1,6 +1,0 @@
-{
-  "bundle_name": "model-1-random-forest",
-  "selected_model_name": "random_forest",
-  "artifact_written": false,
-  "note": "Local joblib/pkl intentionally omitted for now."
-}
